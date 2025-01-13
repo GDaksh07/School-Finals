@@ -1,0 +1,24 @@
+class LevelSelection{
+  private int xValue;
+  private int yValue;
+  private int levelNumber;
+  private int boxSizeX = 115;
+  private int boxSizeY = 130;
+  
+  public LevelSelection (int xValue1, int yValue1, int levelNumber1){
+    this.xValue = xValue1;
+    this.yValue = yValue1;
+    this.levelNumber = levelNumber1;
+  }
+  
+  void draw(){
+    // Textsize of the number inside the box
+    textSize (170);
+    text (levelNumber, xValue + 15, yValue + 122);
+    
+    noFill();
+    strokeWeight (5);
+    rect (xValue, yValue, boxSizeX, boxSizeY);
+    strokeWeight (1);
+  }
+}
