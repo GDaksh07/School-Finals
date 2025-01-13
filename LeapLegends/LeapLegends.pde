@@ -1,6 +1,3 @@
-// Name - Daksh Gulati
-
-
 // Player's horizontal position
 int playerX = 110; 
 
