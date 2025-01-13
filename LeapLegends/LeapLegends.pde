@@ -23,7 +23,7 @@ boolean onPlatform = false;
 float speed = 0;
 
 // Sets the level
-int level = -1;
+int level = 0;
 
 // Checks if the button is pressed or not
 boolean buttonPressed = false;
@@ -385,12 +385,19 @@ void endScreen(){
   textSize (100);
   text ("You Win", 420, 300);
   
+  // Creates the restart button
   textSize (80);
   text ("Restart", 465, 550);
   noFill();
   strokeWeight(5);
   rect (455, 485, 255, 75);
   strokeWeight (1);
+  
+  if (mousePressed == true){
+    if (mouseX > 455 && mouseX < 710 && mouseY > 485 && mouseY < 560){
+      level = 1;
+    }
+  }
 }
 
 
