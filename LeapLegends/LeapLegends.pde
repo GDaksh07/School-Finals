@@ -170,7 +170,7 @@ void draw() {
   
   
   // Back Button
-  if (level != 0 && level != -1){
+  if (level != 0){
     backButton();
   }
   
@@ -340,10 +340,8 @@ void drawLevels (){
 // Makes it so user can go back to main screen
 void backButton(){
   // makes a back button out of a rectange and triangle on actual levels to go back to the start screen
-  if (level != 0 && level != -1){
     rect (40, 40, 25, 10);
     triangle (40, 30, 40, 60, 20, 45);
-  }
   
   // If button is pressed, user will go back to start screen
   if (mousePressed == true){
