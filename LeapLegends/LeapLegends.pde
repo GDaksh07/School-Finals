@@ -331,6 +331,7 @@ void drawLevels (){
     rect (400, 0, width, 475);
     triangle(400, 475, 700, 475, 700, 525);
     rect (700, 475, width, 50);
+    stroke(0);
   }
 }
 
@@ -406,7 +407,7 @@ void endScreen(){
 void levelSelection(){
   textSize (100);
   text ("Level Selection", 275, 150);
-  // Draws the levels
+  // Draws the level selection for each level
   level1.draw();
   level2.draw();
   level3.draw();
