@@ -1,23 +1,38 @@
+// Name - Daksh Gulati
+
+
 // Player's horizontal position
 int playerX = 110; 
+
 // Player's vertical position
 int playerY = 725;
+
 // Gravity effect
 int gravity = 1;
+
 // Player's vertical speed
 int velocity = 0;
+
 // Tracks if the player is in the air
 boolean isJumping = false;
+
 // Tracks if the player is on a platform
 boolean onPlatform = false; 
+
 // Horizontal speed for smoother movement
 float speed = 0;
+
 // Sets the level
-int level = 0;
+int level = -1;
+
 // Checks if the button is pressed or not
 boolean buttonPressed = false;
+
 // Checks how many times you have died
 int deathCount = 0;
+
+// Size of the player
+int playerSize = 50;
 
 // Declares the ground
 Platform Grass, Lava3, Lava51, Lava52;
@@ -42,8 +57,8 @@ Button button5;
 // Declares the finish lines
 FinishLine Finish1, Finish2, Finish3, Finish4, Finish5;
 
-// Size of the player
-int playerSize = 50;
+// Declares the levels for each level to select
+LevelSelection level1, level2, level3, level4, level5;
 
 void setup() {
   size(1200, 800);
@@ -109,6 +124,14 @@ void setup() {
   Lava3 = new Platform (260, height - 20, width, 20, 207, 16, 32);
   Lava51 = new Platform (0, height - 20, 100, 20, 207, 16, 32);
   Lava52 = new Platform (290, height - 20, width, 20, 207, 16, 32);
+  
+  
+  // Level Selection
+  level1 = new LevelSelection (275, 250, 1);
+  level2 = new LevelSelection (525, 250, 2);
+  level3 = new LevelSelection (775, 250, 3);
+  level4 = new LevelSelection (400, 450, 4);
+  level5 = new LevelSelection (650, 450, 5);
 }
 
 void draw() {
@@ -118,7 +141,124 @@ void draw() {
   // Draws ground
   Grass.draw();
   
-  // Draw platforms
+  
+  // Draws the Levels
+  drawLevels();
+  
+  
+  // Draw player
+  if (level != 0 && level != -1 && level != -2 && level != -3){
+    // Red color for player
+    fill(255, 0, 0);
+    rect(playerX, playerY, playerSize, playerSize);
+  }
+  
+  
+  // Deathcount display
+  fill (0);
+  textSize(25);
+  if (level != 0 && level != -1 && level != -2 && level != -3){
+    text("Deaths: " + deathCount, width - 135, 30);
+  }
+  
+  
+  // Level Display
+  if (level != 0 && level != -1 && level != -2 && level != -3){
+    textSize (35);
+    text ("Level: " + level, width / 2 - 70, 45);
+  }
+  
+  
+  // Back Button
+  if (level != 0 && level != -1){
+    backButton();
+  }
+  
+  
+  // Displays the start screen
+  if (level == 0){
+    startScreen();
+  }
+  
+  
+  // Displays the end screen
+  if (level == -1){
+    endScreen(); 
+  }
+  
+  
+  // Display the level selection screen
+  if (level == -3){
+    levelSelection();
+  }
+  
+  
+  // Movement
+  // Applies gravity if not on platform
+  if (!onPlatform) {
+    velocity += gravity;
+  }
+  
+  // Moves player vertically
+  playerY += velocity;
+  // Moves player horizontally
+  playerX += speed;
+  
+  
+  // Adds to the level counter to make it go to the next level
+  checkLevel();
+  
+  
+  // Checks if player has pressed the button / collision
+  buttonPressed();
+  
+  
+  // Determines if the player is in lava, if so the player is reset
+  lava();
+  
+  
+  // Handles Collisions
+  // Makes player not go off screen
+  screenCollision();
+  // Makes it so player stays onto the platform
+  checkCollision();
+  // Mountain collision
+  montainCollision();
+}
+
+
+
+// Handles movement
+void keyPressed() {
+  // Handle left/right movement
+  if (key == 'a' || key == 'A' || keyCode == LEFT) {
+    speed = -5;
+  } else if (key == 'd' || key == 'D' || keyCode == RIGHT) {
+    speed = 5;
+  }
+  
+  // Jump upwards
+  if ((key == 'w' || key == 'W' || keyCode == UP) && !isJumping) {
+    velocity = -15;
+    isJumping = true;
+    onPlatform = false;
+  }
+}
+
+
+
+// If movement of left and right key is released then the speed is 0
+void keyReleased() {
+  if (key == 'a' || key == 'A' || keyCode == LEFT || key == 'd' || key == 'D' || keyCode == RIGHT) {
+    speed = 0;
+  }
+}
+
+
+
+// Draws the Levels
+void drawLevels (){
+  // Draw levels
   if (level == 1){
     // Level 1 platforms
     Level11.draw();
@@ -192,108 +332,92 @@ void draw() {
     triangle(400, 475, 700, 475, 700, 525);
     rect (700, 475, width, 50);
   }
-  
-  
-  
-  // Draw player
-  fill(255, 0, 0); // Red color for player
-  rect(playerX, playerY, playerSize, playerSize);
-  
-  
-  
-  // Applies gravity if not on platform
-  if (!onPlatform) {
-    velocity += gravity;
-  }
-  
-  
-  // Deathcount display
-  fill (0);
-  textSize(25);
-  text("Deaths: " + deathCount, width - 150, 30);
-  
-  
-  // Movement
-  // Moves player vertically
-  playerY += velocity;
-  // Moves player horizontally
-  playerX += speed;
-  
-  
-  // Handles Collisions
-  // Makes player not go off screen
-  screenCollision();
-  // Makes it so player stays onto the platform
-  checkCollision();
-  // Mountain collision
-  montainCollision();
-  
-  
-  // Adds to the level counter to make it go to the next level
-  checkLevel();
-  
-  
-  // Determines if the player is in lava, if so the player is reset
-  lava();
-  
-  
-  // Checks if player has pressed the button / collision
-  buttonPressed();
 }
 
 
 
-void keyPressed() {
-  // Handle left/right movement
-  if (key == 'a' || key == 'A') {
-    speed = -5;
-  } else if (key == 'd' || key == 'D') {
-    speed = 5;
+// Makes it so user can go back to main screen
+void backButton(){
+  // makes a back button out of a rectange and triangle on actual levels to go back to the start screen
+  if (level != 0 && level != -1){
+    rect (40, 40, 25, 10);
+    triangle (40, 30, 40, 60, 20, 45);
   }
   
-  // Jump upwards
-  if ((key == 'w' || key == 'W') && !isJumping) {
-    velocity = -15;
-    isJumping = true;
-    onPlatform = false;
-  }
-}
-
-
-
-// If movement of left and right key is released then the speed is 0
-void keyReleased() {
-  if (key == 'a' || key == 'A' || key == 'd' || key == 'D') {
-    speed = 0;
-  }
-}
-
-
-
-// Makes it so player does not go off the screen
-void screenCollision(){
-  // If player is on the left side of the screen so it won't go off
-  if (playerX < 0) {
-  playerX = 0;
-  }
-  
-  // If player is on the right side of the screen so it won't go off
-  if (playerX + playerSize > width) {
-    playerX = width - playerSize; 
-  }
-}
-
-
-
-// Adds collision to the mountain
-void montainCollision(){
-  if (level == 5){
-    if (playerX + playerSize > 400 && playerX < width && playerY + playerSize >= 0 && playerY <= 475){
-      playerX = 400 - playerSize;
+  // If button is pressed, user will go back to start screen
+  if (mousePressed == true){
+    if (mouseX > 15 && mouseX < 65 && mouseY > 25 && mouseY < 50){
+      level = 0;
     }
-    
-    if (playerX + playerSize > 400 && playerX < width && playerY + playerSize >= 475 && playerY <= 525){
-      playerY = 525;
+  }
+}
+
+
+
+// Builds the start screen
+void startScreen(){
+  // Displays the start screen
+  textSize (100);
+  text ("Press  To  Start", 295, height / 2 + 25);
+  
+  textSize (30);
+  text ("How to Play", width - 170, height - 50);
+  text ("Level Select", 25, height - 50);
+  
+  // If button is pressed, user will go to level 1
+  if (mousePressed == true){
+    if (mouseX > 285 && mouseX < 900 && mouseY > height / 2 - 75 && mouseY < height / 2 + 25){
+      level = 1;
+      // Rules collision and player will be sent to level -2
+    } else if (mouseX > width - 170 && mouseX < width - 25 && mouseY > height - 50 - 30 && mouseY < height - 50){
+      level = -2;
+      // Level Selection collision and player will be sent to level -3
+    } else if (mouseX > 25 && mouseX < 170 && mouseY > height - 50 - 30 && mouseY < height - 50){
+      level = -3;
+    }
+  }
+}
+
+
+
+// Builds the endscreen
+void endScreen(){
+  textSize (100);
+  text ("You Win", 420, 300);
+  
+  textSize (80);
+  text ("Restart", 465, 550);
+  noFill();
+  strokeWeight(5);
+  rect (455, 485, 255, 75);
+  strokeWeight (1);
+}
+
+
+
+// Builds the level selection screen
+void levelSelection(){
+  textSize (100);
+  text ("Level Selection", 275, 150);
+  // Draws the levels
+  level1.draw();
+  level2.draw();
+  level3.draw();
+  level4.draw();
+  level5.draw();
+  
+  // Mouse collisions to go to each level
+  if (mousePressed == true){
+    if (mouseX > 275 && mouseX < 390 && mouseY > 250 && mouseY < 380){
+      level = 1;
+    } else if (mouseX > 525 && mouseX < 640 && mouseY > 250 && mouseY < 380){
+      level = 2;
+    } else if (mouseX > 775 && mouseX < 890 && mouseY > 250 && mouseY < 380){
+      level = 3;
+    } else if (mouseX > 400 && mouseX < 515 && mouseY > 450 && mouseY < 580){
+      level = 4;
+    } else if (mouseX > 650 && mouseX < 765 && mouseY > 450 && mouseY < 580){
+      level = 5;
     }
   }
 }
@@ -341,11 +465,23 @@ void checkLevel() {
       // Resets button
       buttonPressed = false;
       // Move to level 5
-      level = 6;
+      level = -1;
       // Reset player position for level 5
       resetPlayerPosition();
     }
   }
+}
+
+
+
+// Resets players position to starting point
+void resetPlayerPosition() {
+  // Reset characters position
+  playerX = 110; 
+  playerY = 725; 
+  velocity = 0; 
+  isJumping = false; 
+  buttonPressed = false;
 }
 
 
@@ -373,18 +509,6 @@ void buttonPressed(){
 
 
 
-// Resets players position to starting point
-void resetPlayerPosition() {
-  // Reset characters position
-  playerX = 110; 
-  playerY = 725; 
-  velocity = 0; 
-  isJumping = false; 
-  buttonPressed = false;
-}
-
-
-
 // Checks for the lava to reset player
 void lava(){
   if (level == 3){
@@ -398,6 +522,36 @@ void lava(){
         playerX + playerSize > 290 && playerX < width && playerY + playerSize >= height - 20 && playerY <= height){
       resetPlayerPosition();
       deathCount += 1;
+    }
+  }
+}
+
+
+
+// Makes it so player does not go off the screen
+void screenCollision(){
+  // If player is on the left side of the screen so it won't go off
+  if (playerX < 0) {
+  playerX = 0;
+  }
+  
+  // If player is on the right side of the screen so it won't go off
+  if (playerX + playerSize > width) {
+    playerX = width - playerSize; 
+  }
+}
+
+
+
+// Adds collision to the mountain
+void montainCollision(){
+  if (level == 5){
+    if (playerX + playerSize > 400 && playerX < width && playerY + playerSize >= 0 && playerY <= 475){
+      playerX = 400 - playerSize;
+    }
+    
+    if (playerX + playerSize > 400 && playerX < width && playerY + playerSize >= 475 && playerY <= 525){
+      playerY = 525;
     }
   }
 }
