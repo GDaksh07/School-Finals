@@ -1,66 +1,57 @@
-// Player's horizontal position
-int playerX = 110; 
+/* Name - Daksh Gulati
+Date - 1/17/25
+Purpose - The purpose of this code is to play a simple platformer. Jumping from one platform to another to reach the finish line of each level. This game consists of 5 levels total
+          and many other screens like a start, end, how to play and a level selection screen. 
+*/
 
-// Player's vertical position
-int playerY = 725;
+// Coodinates of the player
+int playerX = 110; // Player's horizontal position
+int playerY = 725; // Player's vertical position
 
-// Gravity effect
-int gravity = 1;
+// Variables for the player jumping or falling with different speeds
+int gravity = 1; // Gravity effect
+int velocity = 0; // Player's vertical speed
+boolean isJumping = false; // Tracks if the player is in the air
+boolean onPlatform = false; // Tracks if the player is on a platform
 
-// Player's vertical speed
-int velocity = 0;
+float speed = 0; // Horizontal speed for smoother movement
 
-// Tracks if the player is in the air
-boolean isJumping = false;
+int level = 0; // Sets the level
 
-// Tracks if the player is on a platform
-boolean onPlatform = false; 
+boolean buttonPressed = false; // Checks if the button is pressed or not
 
-// Horizontal speed for smoother movement
-float speed = 0;
+// Background colour depending on if left click or right click is pressed
+color c1 = color (173, 216, 230); // Blue colour
+color c2 = color (186, 85, 211); // Purple colour
+int colour = 0;
 
-// Sets the level
-int level = 0;
+int deathCount = 0; // Counts how many times you have died
 
-// Checks if the button is pressed or not
-boolean buttonPressed = false;
+int playerSize = 50; // Size of the player
 
-// Checks how many times you have died
-int deathCount = 0;
+// Creates variables for 2 images
+PImage logoBlue; // Blue version of the image
+PImage logoPurple; // Purple version of the image
 
-// Size of the player
-int playerSize = 50;
+// Declaration of variables for different classes
+Platform Grass, Lava3, Lava51, Lava52; // Declares the ground
+Platform Level11, Level12, Level13, Level14, Level15; // Declares platforms for level 1
+Platform Level21, Level22, Level23, Level24, Level25, Level26; // Declares platforms for level 2
+Platform Level31, Level32, Level33, Level34, Level35, Level36; // Declares platforms for level 3
+Platform Level41, Level42, Level43; // Declares platforms for level 4
+Platform Level51, Level52, Level53, Level54, Level55, Level56, Level57, Level58; // Declares platforms for level 5
+Button button4, button5; // Declares the buttons
+FinishLine Finish1, Finish2, Finish3, Finish4, Finish5; // Declares the finish lines
+LevelSelection level1, level2, level3, level4, level5; // Declares the levels for each level to select
 
-// Declares the ground
-Platform Grass, Lava3, Lava51, Lava52;
-
-// Declares platforms for level 1
-Platform Level11, Level12, Level13, Level14, Level15;
-
-// Declares platforms for level 2
-Platform Level21, Level22, Level23, Level24, Level25, Level26;
-
-// Declares platforms for level 3
-Platform Level31, Level32, Level33, Level34, Level35, Level36;
-
-// Declares platforms for level 4
-Platform Level41, Level42, Level43;
-Button button4;
-
-// Declares platforms for level 5
-Platform Level51, Level52, Level53, Level54, Level55, Level56, Level57, Level58;
-Button button5;
-
-// Declares the finish lines
-FinishLine Finish1, Finish2, Finish3, Finish4, Finish5;
-
-// Declares the levels for each level to select
-LevelSelection level1, level2, level3, level4, level5;
 
 void setup() {
   size(1200, 800);
   
-  // Level level number, platform number
+  background(c1); // Sky blue background at the start of the game
+  
+  // Creates the objects
+  // Each platform is written by: level level number, platform number
   // Level 1
   Level11 = new Platform (80, 650, 200, 20);
   Level12 = new Platform (420, 550, 200, 20);
@@ -129,19 +120,34 @@ void setup() {
   level3 = new LevelSelection (775, 250, 3);
   level4 = new LevelSelection (400, 450, 4);
   level5 = new LevelSelection (650, 450, 5);
+  
+  // Adds the image to the code
+  logoBlue = loadImage ("Leap Legends Blue.png"); // Blue background
+  logoPurple = loadImage ("Leap Legends Purple.png"); // Purple background
 }
 
 void draw() {
-  // Sky blue background
-  background(173, 216, 230);
+  /* The purpose of this draw is to use multiple methods that include drawLevels(), backButton(), startScreen(), endScreen(), howToPlay(), levelSelection(), checkLevel(),
+  buttonPressed(), lava(), screenCollision(), checkCollision(), mountainCollision(). All these methods are used to work sidebyside to use collisions, checking lava or levels and different screens
+  like the start, end, how to play and level selection screens to elevate the users experience. There is a background change inside which allows the user to switch between a purple or blue 
+  background. Adding different displays like deathcount and showing which level the user is on. Lastly the draw includes the movement of the player, moving left and right by using in built methods
+  to assist the movement but not only left and right are in the draw, but also the jump, the jump is useful for the player to go from platform to platform. Jumping has many mechanics which
+  the user will have to figure out on their own.
+  */
   
-  // Draws ground
-  Grass.draw();
   
+    // The user is able to change the background colour
+    // Sky blue background (will initially start as a sky blue colour) if left mouse button is clicked
+    if (colour == 0){
+      background (c1);
+    } else if (colour == 1){
+      // Purple background if right mouse button is clicked
+      background (c2);
+    }
   
-  // Draws the Levels
-  drawLevels();
+  Grass.draw(); // Draws the grass
   
+  drawLevels(); // This is a custom method that draws the levels (1 to 5)
   
   // Draw player
   if (level != 0 && level != -1 && level != -2 && level != -3){
@@ -152,75 +158,72 @@ void draw() {
   
   
   // Deathcount display
-  fill (0);
-  textSize(25);
+  fill (0); // Makes the colour of the text to black
+  textSize(25); // Changes the size of the text to 25
   if (level != 0 && level != -1 && level != -2 && level != -3){
-    text("Deaths: " + deathCount, width - 135, 30);
+    text("Deaths: " + deathCount, width - 135, 30); // Outputs the deathcount on level screens
   }
   
   
   // Level Display
   if (level != 0 && level != -1 && level != -2 && level != -3){
-    textSize (35);
-    text ("Level: " + level, width / 2 - 70, 45);
+    textSize (35); // Changes the size of the text to 35
+    text ("Level: " + level, width / 2 - 70, 45); // Outputs the level display on level screens
   }
   
   
   // Back Button
   if (level != 0){
-    backButton();
+    backButton(); // This is a custom method that draws the back button and adds functionallity to it so it can go back to the start screen
   }
   
   
   // Displays the start screen
   if (level == 0){
-    startScreen();
+    startScreen(); // This is a custom method to display the start screen
   }
   
   
   // Displays the end screen
   if (level == -1){
-    endScreen(); 
+    endScreen(); // This is a custom method to display the end screen
+  }
+  
+  
+  // Displays the how to play screen
+  if (level == -2){
+    howToPlay(); // This is a custom method to display the how to play screen
   }
   
   
   // Display the level selection screen
   if (level == -3){
-    levelSelection();
+    levelSelection(); // This is a custom method to display the level selection screen
   }
   
   
   // Movement
+  // Movement of the different keys will be in the different key methods under the draw
   // Applies gravity if not on platform
+  // This is done by removing the vertical velocity slowly that is intially given by jumping until the user is going downwards / upwards until they land on a platform
   if (!onPlatform) {
     velocity += gravity;
   }
   
-  // Moves player vertically
-  playerY += velocity;
-  // Moves player horizontally
-  playerX += speed;
+  playerY += velocity; // Moves player vertically
+  playerX += speed; // Moves player horizontally
   
+  checkLevel(); // This is a custom method that adds to the level counter to make it go to the next level
   
-  // Adds to the level counter to make it go to the next level
-  checkLevel();
+  buttonPressed(); // This is a custom method that checks if player has pressed the button
   
-  
-  // Checks if player has pressed the button / collision
-  buttonPressed();
-  
-  
-  // Determines if the player is in lava, if so the player is reset
-  lava();
+  lava(); // This is a custom that determines if the player is in lava, if so the player is reset
   
   
   // Handles Collisions
-  // Makes player not go off screen
-  screenCollision();
-  // Makes it so player stays onto the platform
-  checkCollision();
-  // Mountain collision
-  montainCollision();
+  screenCollision(); // This is a custom method that makes player not go off screen
+  checkCollision(); // This is a custom method that makes it so player stays onto the platform
+  montainCollision(); // This is a custom method that adds mountain collision
 }
 
 
@@ -229,9 +232,9 @@ void draw() {
 void keyPressed() {
   // Handle left/right movement
   if (key == 'a' || key == 'A' || keyCode == LEFT) {
-    speed = -5;
+    speed = -5; // Player moves left
   } else if (key == 'd' || key == 'D' || keyCode == RIGHT) {
-    speed = 5;
+    speed = 5; // Player moves right
   }
   
   // Jump upwards
@@ -247,7 +250,18 @@ void keyPressed() {
 // If movement of left and right key is released then the speed is 0
 void keyReleased() {
   if (key == 'a' || key == 'A' || keyCode == LEFT || key == 'd' || key == 'D' || keyCode == RIGHT) {
-    speed = 0;
+    speed = 0; // Makes player stop moving left or right
+  }
+}
+
+
+
+// Depending on which mouse button is pressed the background will change
+void mousePressed(){
+  if (mouseButton == LEFT){
+    colour = 0; // Blue colour
+  } else if (mouseButton == RIGHT){
+    colour = 1; // Purple colour
   }
 }
 
@@ -343,7 +357,8 @@ void backButton(){
   // If button is pressed, user will go back to start screen
   if (mousePressed == true){
     if (mouseX > 15 && mouseX < 65 && mouseY > 25 && mouseY < 50){
-      level = 0;
+      level = 0; // Sets level to 0
+      deathCount = 0; // Sets deathcount to 0
     }
   }
 }
@@ -353,24 +368,30 @@ void backButton(){
 // Builds the start screen
 void startScreen(){
   // Displays the start screen
-  textSize (100);
+  textSize (100); // Makes text size 100
   text ("Press  To  Start", 295, height / 2 + 25);
   
-  textSize (30);
+  textSize (30); // Makes text size 30
   text ("How to Play", width - 170, height - 50);
   text ("Level Select", 25, height - 50);
   
   // If button is pressed, user will go to level 1
   if (mousePressed == true){
     if (mouseX > 285 && mouseX < 900 && mouseY > height / 2 - 75 && mouseY < height / 2 + 25){
-      level = 1;
+      level = 1; // If "Press to start" is pressed
       // Rules collision and player will be sent to level -2
     } else if (mouseX > width - 170 && mouseX < width - 25 && mouseY > height - 50 - 30 && mouseY < height - 50){
-      level = -2;
+      level = -2; // If "How to play" is pressed
       // Level Selection collision and player will be sent to level -3
     } else if (mouseX > 25 && mouseX < 170 && mouseY > height - 50 - 30 && mouseY < height - 50){
-      level = -3;
-    }
+      level = -3; // If "Level selection" is pressed
+    } 
+  }
+  
+  if (colour == 0){
+    image (logoBlue, 110, 50, 1000, 250); // Adds the logo in blue
+  } else if (colour == 1) {
+    image (logoPurple, 110, 32, 1000, 280); // Adds the logo in purple
   }
 }
 
@@ -378,29 +399,45 @@ void startScreen(){
 
 // Builds the endscreen
 void endScreen(){
-  textSize (100);
+  textSize (100); // Makes text size 100
   text ("You Win", 420, 300);
   
   // Creates the restart button
-  textSize (80);
+  textSize (80); // Makes text size 80
   text ("Restart", 465, 550);
   noFill();
-  strokeWeight(5);
+  strokeWeight(5); // Makes strokeWeight to 5
   rect (455, 485, 255, 75);
-  strokeWeight (1);
+  // Everything else below will have a stroke rather than a higher strokeWeight
+  strokeWeight (1); // Makes strokeWeight to 1 so nothing else if affected
+  
+  deathCount = 0; // Sets deathcount to 0 so player can restart the game with a fresh start
   
   if (mousePressed == true){
     if (mouseX > 455 && mouseX < 710 && mouseY > 485 && mouseY < 560){
-      level = 1;
+      level = 1; // Sets level to 1 if the "restart" button is pressed
     }
   }
 }
 
 
 
+// Builds the howToPlay screen
+void howToPlay(){
+  textSize(25); // Makes text size 25
+  text("1. Move by pressing w, a and d or using arrow keys", 20, 125);
+  text("2. Go platform to platform to make it to the finish line of each level", 20, 200);
+  text("3. Be sure to go into the finish line all the way so you will move onto the next level", 20, 275);
+  text("4. Find out new features and ways to platform across", 20, 350);
+  text("5. Press left mouse button to make the background blue and right click to make it purple", 20, 425);
+  text("6. Have fun", 20, 500);
+}
+
+
+
 // Builds the level selection screen
 void levelSelection(){
-  textSize (100);
+  textSize (100); // Makes text size 100
   text ("Level Selection", 275, 150);
   // Draws the level selection for each level
   level1.draw();
@@ -412,15 +449,15 @@ void levelSelection(){
   // Mouse collisions to go to each level
   if (mousePressed == true){
     if (mouseX > 275 && mouseX < 390 && mouseY > 250 && mouseY < 380){
-      level = 1;
+      level = 1; // Goes to level 1 if level 1 is pressed
     } else if (mouseX > 525 && mouseX < 640 && mouseY > 250 && mouseY < 380){
-      level = 2;
+      level = 2; // Goes to level 2 if level 2 is pressed
     } else if (mouseX > 775 && mouseX < 890 && mouseY > 250 && mouseY < 380){
-      level = 3;
+      level = 3; // Goes to level 3 if level 3 is pressed
     } else if (mouseX > 400 && mouseX < 515 && mouseY > 450 && mouseY < 580){
-      level = 4;
+      level = 4; // Goes to level 4 if level 4 is pressed
     } else if (mouseX > 650 && mouseX < 765 && mouseY > 450 && mouseY < 580){
-      level = 5;
+      level = 5; // Goes to level 5 if level 5 is pressed
     }
   }
 }
