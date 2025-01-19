@@ -1,3 +1,5 @@
+// Creates a visual for all the levels in the level selection menu for the user to click with designated level numbers with a box around so the player knows where to click
+
 class LevelSelection{
   private int xValue;
   private int yValue;
@@ -5,20 +7,23 @@ class LevelSelection{
   private int boxSizeX = 115;
   private int boxSizeY = 130;
   
+  // Takes in values for where the level selection box should be places
   public LevelSelection (int xValue1, int yValue1, int levelNumber1){
     this.xValue = xValue1;
     this.yValue = yValue1;
     this.levelNumber = levelNumber1;
   }
   
+  // Builds a box around the number with the coordinate given
   void draw(){
     // Textsize of the number inside the box
-    textSize (170);
-    text (levelNumber, xValue + 15, yValue + 122);
+    textSize (170); // Changes text size to 170
+    text (levelNumber, xValue + 15, yValue + 122); // Writes the text with specific number
     
-    noFill();
-    strokeWeight (5);
+    // Adds a box around the number
+    noFill(); // Removes the fill of the rect
+    strokeWeight (5); // Changes strokeWeight to 5
     rect (xValue, yValue, boxSizeX, boxSizeY);
-    strokeWeight (1);
+    strokeWeight (1); // Changes strokeWeight to 1 so it doesn't affect the rest of the code
   }
 }
