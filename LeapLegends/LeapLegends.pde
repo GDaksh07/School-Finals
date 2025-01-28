@@ -1,5 +1,5 @@
 /* Name - Daksh Gulati
-Date - 1/17/25
+Date - 1/22/25
 Purpose - The purpose of this code is to play a simple platformer. Jumping from one platform to another to reach the finish line of each level. This game consists of 5 levels total
           and many other screens like a start, end, how to play and a level selection screen. 
 */
